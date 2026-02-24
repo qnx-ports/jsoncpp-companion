@@ -1,0 +1,47 @@
+pkgname=jsoncpp
+pkgver=1.9.6
+pkgrel=0
+pkgdesc="A C++ library for interacting with JSON."
+url="https://github.com/open-source-parsers/jsoncpp"
+arch="all"
+license="MIT"
+options="!check"
+makedepends="qnx-base-dev meson"
+depends_dev=$makedepends
+depends=""
+subpackages="${pkgname}-dev"
+source="${pkgname}-${pkgver}.tar.gz::https://github.com/open-source-parsers/jsoncpp/archive/refs/tags/${pkgver}.tar.gz"
+builddir=${srcdir}/${pkgname}-${pkgver}
+
+build() {
+    _extra_flags=""
+    if [[ $CBUILD = $CHOST ]]; then
+        # Compile natively
+        _extra_flags="-Dc_args=-D_QNX_SOURCE -Dc_link_args=-Wl,-lsocket"
+    else
+        # Cross compiling
+        BUILD_ROOT=$CBUILDROOT $CBUILDROOT/usr/bin/gen-meson-cross
+        _extra_flags="--cross-file=meson.cross"
+    fi
+
+    export CC=clang \
+    export CXX=clang++ \
+
+    # cross for now, worry about self-hosted when the toolchain is up
+    meson_args="-Dtests=false \
+                --reconfigure \
+                --buildtype=release \
+                --prefix="${PREFIX}" \
+                "
+
+    meson setup $_extra_flags ${meson_args} build
+    ninja -C build
+}
+
+package() {
+    DESTDIR=${pkgdir} ninja -C ${builddir}/build install
+}
+
+sha512sums="
+006d81f9f723dcfe875ebc2147449c07c5246bf97dd7b9eee1909decc914b051d6f3f06feb5c3dfa143d28773fb310aabb04a81dc447cc61513309df8eba8b08  jsoncpp-1.9.6.tar.gz
+"
