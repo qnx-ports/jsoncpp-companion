@@ -1,6 +1,6 @@
 pkgname=jsoncpp
 pkgver=1.9.6
-pkgrel=${pkgrel:-0}
+pkgrel=0
 pkgdesc="A C++ library for interacting with JSON."
 url="https://github.com/open-source-parsers/jsoncpp"
 arch="all"
@@ -42,7 +42,6 @@ package() {
     DESTDIR=${pkgdir} ninja -C ${builddir}/build install
 }
 
-options="$options ${DISABLE_CHECK:+!check}"
 sha512sums="
 006d81f9f723dcfe875ebc2147449c07c5246bf97dd7b9eee1909decc914b051d6f3f06feb5c3dfa143d28773fb310aabb04a81dc447cc61513309df8eba8b08  jsoncpp-1.9.6.tar.gz
 "
